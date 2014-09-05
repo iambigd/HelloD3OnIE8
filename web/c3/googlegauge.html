@@ -1,0 +1,85 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+        <link href="../css/c3.css" rel="stylesheet" type="text/css">
+        <!--[if lte IE 8]><script src="../js/r2d3.min.js"></script><![endif]-->
+        <!--[if gte IE 9]><!-->
+        <script src="../js/d3.min.js" charset="utf-8"></script>
+        <!--<![endif]-->
+        <script type="text/javascript" src="gauge.js"></script>
+ 
+		<script>
+						
+				
+			var gauges = [];
+			
+			function createGauge(name, label, min, max)
+			{
+				var config = 
+				{
+					size: 120,
+					label: label,
+					min: undefined != min ? min : 0,
+					max: undefined != max ? max : 100,
+					minorTicks: 5
+				}
+				
+				var range = config.max - config.min;
+				config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
+				config.redZones = [{ from: config.min + range*0.9, to: config.max }];
+				
+				gauges[name] = new Gauge(name + "GaugeContainer", config);
+				gauges[name].render();
+			}
+			
+			function createGauges()
+			{
+				createGauge("memory", "Memory");
+				createGauge("cpu", "CPU");
+				createGauge("network", "Network");
+				//createGauge("test", "Test", -50, 50 );
+			}
+			
+			function updateGauges()
+			{
+				for (var key in gauges)
+				{
+					var value = getRandomValue(gauges[key])
+					gauges[key].redraw(value);
+				}
+			}
+			
+			function getRandomValue(gauge)
+			{
+//                            console.log(gauge.config.min);
+                            var maxVal = 100;//gauge.config.max;
+                            var minVal = 0;//gauge.config.min;
+				var overflow = 0; //10;
+				return minVal - overflow + (maxVal - minVal + overflow*2) *  Math.random();
+			}
+			
+			function initialize()
+			{
+				createGauges();
+				setInterval(updateGauges, 1000);
+			}
+			
+		</script>
+    </head>
+    <body>
+
+        <body onload="initialize()">
+		<span id="memoryGaugeContainer"></span>
+		<span id="cpuGaugeContainer"></span>
+		<span id="networkGaugeContainer"></span>
+		<span id="testGaugeContainer"></span>
+	</body>
+    </body>
+</html>
